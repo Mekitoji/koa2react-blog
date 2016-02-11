@@ -1,60 +1,35 @@
 import mongoose from '../lib/mongoose';
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 const PostSchema = new Schema({
+  title: {
+    required: true,
+    type: String,
+  },
   body: {
     type: String,
     required: true,
   },
   date: {
-    day: {
-      type: Number,
-      required: true,
-    },
-    monthNumber: {
-      type: Number,
-      required: true,
-    },
-    year: {
-      type: Number,
-      required: true,
-    },
+    type: Date,
+    default: Date.now,
+    required: true,
   },
   author: {
-    type: Schema.ObjectId,
+    type: ObjectId,
     ref: 'User',
+    required: true,
   },
-  comments: {
-    type: Schema.ObjectId,
+  comments: [{
+    type: ObjectId,
     ref: 'Comment',
-  },
+  }],
 });
 
 PostSchema.statics.all = function getAll() {
-  return this.find({}).populate('User').populate('Comment');
+  return this.find({}).populate('author comments').exec();
 };
-
-const months = ['January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December'];
-
-const month = PostSchema.virtual('date.month');
-month.get(function getMonth() {
-  return months[this.date.month];
-});
-month.set(function setMonth(m) {
-  this.date.month = months.indexOf(m);
-  return this.date.month;
-});
 
 const Post = mongoose.model('Post', PostSchema);
 export default Post;

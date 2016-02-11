@@ -1,6 +1,7 @@
 import mongoose from '../lib/mongoose';
 const Schema = mongoose.Schema;
 
+// TODO: hash password
 const UserSchema = new Schema({
   mail: {
     type: String,
@@ -10,6 +11,7 @@ const UserSchema = new Schema({
   password: {
     type: String,
     required: true,
+    select: false,
   },
   role: {
     type: String,

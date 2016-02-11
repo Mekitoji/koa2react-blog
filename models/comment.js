@@ -1,9 +1,12 @@
 import mongoose from 'mongoose';
+import Post from './post';
 const Schema = mongoose.Schema;
+const ObjectId = Schema.Types.ObjectId;
 
 const CommentSchema = new Schema({
   author: {
-    type: String,
+    type: ObjectId,
+    ref: 'User',
     required: true,
   },
   body: {
@@ -11,41 +14,28 @@ const CommentSchema = new Schema({
     required: true,
   },
   date: {
-    day: {
-      type: Number,
-      required: true,
-    },
-    monthNumber: {
-      type: Number,
-      required: true,
-    },
-    year: {
-      type: Number,
-      required: true,
-    },
+    type: Date,
+    default: Date.now,
+    required: true,
+  },
+  _post: {
+    type: ObjectId,
+    ref: 'Post',
+    required: true,
   },
 });
 
-const months = ['January',
-                'February',
-                'March',
-                'April',
-                'May',
-                'June',
-                'July',
-                'August',
-                'September',
-                'October',
-                'November',
-                'December'];
+CommentSchema.statics.all = function getAll() {
+  return this
+    .find({})
+    .populate('author')
+    .exec();
+};
 
-const month = CommentSchema.virtual('date.month');
-month.get(function getMonth() {
-  return months[this.date.month];
-});
-month.set(function setMonth(m) {
-  this.date.month = months.indexOf(m);
-  return this.date.month;
+CommentSchema.pre('save', function save(next) {
+  Post.findByIdAndUpdate(this._post, { $push: { comments: this._id } })
+  .exec()
+  .then(() => next());
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
