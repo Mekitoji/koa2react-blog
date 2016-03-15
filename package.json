@@ -5,8 +5,9 @@
   "main": "index.js",
   "scripts": {
     "start": "babel-node index.js",
-    "test": "mocha",
-    "build-client": "webpack"
+    "test": "./node_modules/.bin/_mocha --compilers js:babel-register --recursive test/",
+    "test:watch": "npm test -- --watch",
+    "build:client": "webpack"
   },
   "keywords": [
     "koa2",
@@ -17,6 +18,7 @@
   "author": "Vladimir Egorov <mekitojizzz@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "bcrypt": "^0.8.5",
     "koa": "^2.0.0-alpha.3",
     "koa-bodyparser": "^3.0.0",
     "koa-convert": "^1.2.0",
@@ -26,7 +28,8 @@
     "mongoose": "^4.4.3",
     "react": "^0.14.7",
     "react-dom": "^0.14.7",
-    "react-redux": "^4.4.0"
+    "react-redux": "^4.4.0",
+    "redux": "^3.3.1"
   },
   "devDependencies": {
     "babel-core": "^6.5.1",
@@ -35,9 +38,14 @@
     "babel-preset-es2015-node5": "^1.1.2",
     "babel-preset-react": "^6.5.0",
     "babel-preset-stage-0": "^6.5.0",
+    "chai": "^3.5.0",
+    "chai-as-promised": "^5.2.0",
+    "chai-subset": "^1.2.1",
     "eslint": "^1.10.3",
     "eslint-config-airbnb": "^5.0.0",
     "eslint-plugin-react": "^3.16.1",
+    "mocha": "^2.4.5",
+    "supertest": "^1.2.0",
     "webpack": "^1.12.13",
     "webpack-dev-server": "^1.14.1"
   }
