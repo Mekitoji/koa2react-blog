@@ -23,6 +23,8 @@ const CommentSchema = new Schema({
     ref: 'Post',
     required: true,
   },
+}, {
+  versionKey: false,
 });
 
 CommentSchema.statics.all = function getAll() {

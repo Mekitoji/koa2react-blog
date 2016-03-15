@@ -1,4 +1,4 @@
-import mongoose from '../lib/mongoose';
+import mongoose from 'mongoose';
 const Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
@@ -25,6 +25,8 @@ const PostSchema = new Schema({
     type: ObjectId,
     ref: 'Comment',
   }],
+}, {
+  versionKey: false,
 });
 
 PostSchema.statics.all = function getAll() {
