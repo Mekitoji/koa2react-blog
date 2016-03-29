@@ -11,13 +11,14 @@ const agent = request.agent(app.listen());
 chai.use(chaiSubset);
 chai.use(chaiAsPromised);
 
-before(() => {
+before(async () => {
   const URI = 'mongodb://localhost/testKoa2blog';
-  mongoose.connect(URI);
+  await mongoose.connect(URI);
 });
 
-after(() => {
-  mongoose.connection.db.dropDatabase();
+after(async () => {
+  await mongoose.connection.db.dropDatabase();
+  await mongoose.connection.close();
 });
 
 
@@ -28,9 +29,9 @@ describe('api endpoint', () => {
 
     describe('#post', () => {
       let userID = '';
-      after(done => {
+      after(async () => {
         // Clean up after each test
-        User.remove({}).then(() => done());
+        await User.remove({});
       });
 
       it('expect response with 200', done => {
@@ -48,21 +49,19 @@ describe('api endpoint', () => {
           });
       });
 
-      it('expect get a user object without password', done => {
-        expect(User.findById(userID).exec()).to.eventually.containSubset({
+      it('expect get a user object without password', async () => {
+        const u = await User.findById(userID);
+        expect(u).to.containSubset({
           mail: user.mail,
           role: user.role,
-        }).and.not.have.key('password').notify(done);
+        }).and.not.have.key('password');
       });
     });
 
     describe('#get', () => {
-      after(done => {
-        // Clean up after each test
-        User.remove({}).then(() => done());
-      });
-      before(done => {
-        User.create(user).then(() => done());
+      before(async () => {
+        await User.remove({});
+        await User.create(user);
       });
 
       it('expect length of response array equal 1', done => {
@@ -80,18 +79,15 @@ describe('api endpoint', () => {
 
     describe('#get:id', () => {
       let userID = '';
-      after(done => {
-        // Clean up after each test
-        User.remove({}).then(() => done());
+
+      before(async () => {
+        await User.remove({});
+        const u = await User.create(user);
+        expect(u).to.be.an('object');
+        expect(u._id).to.exist;
+        userID = u._id;
       });
-      before(done => {
-        User.create(user).then(data => {
-          expect(data).to.be.an('object');
-          expect(data._id).to.exist;
-          userID = data._id;
-          done();
-        });
-      });
+
       it('expect get a 200 response', done => {
         agent
           .get(`${prefix}/${userID}`)
@@ -110,16 +106,13 @@ describe('api endpoint', () => {
     describe('#put', () => {
       let userID = '';
       const newUser = { mail: user.mail, role: 'root' };
-      after(done => {
-        // Clean up after each test
-        User.remove({}).then(() => done());
-      });
-      before(done => {
-        User.create(user).then(data => {
-          expect(data).to.be.an('object');
-          userID = data._id;
-          done();
-        });
+
+      before(async () => {
+        await User.remove({});
+        const u = await User.create(user);
+        expect(u).to.be.an('object');
+        expect(u._id).to.exist;
+        userID = u._id;
       });
 
       it('expect response 200', done => {
@@ -134,22 +127,22 @@ describe('api endpoint', () => {
           });
       });
 
-      it('expect user was changed', done => {
-        expect(User.findById(userID).exec()).eventually.containSubset(newUser).notify(done);
+      it('expect user was changed', async () => {
+        const u = await User.findById(userID);
+        expect(u).to.containSubset(newUser);
       });
     });
     describe('#delete', () => {
       let userID = '';
-      after(done => {
-        User.remove({}).then(() => done());
+
+      before(async () => {
+        await User.remove({});
+        const u = await User.create(user);
+        expect(u).to.be.an('object');
+        expect(u._id).to.exist;
+        userID = u._id;
       });
-      before(done => {
-        User.create(user).then(data => {
-          expect(data).to.be.an('object');
-          userID = data._id;
-          done();
-        });
-      });
+
       it('expect response with 200 ', done => {
         agent
           .delete(`${prefix}/${userID}`)
@@ -160,8 +153,9 @@ describe('api endpoint', () => {
             done();
           });
       });
-      it('expect user was deleted', done => {
-        expect(User.findById(userID).exec()).to.be.eventually.not.exist.notify(done);
+      it('expect user was deleted', async () => {
+        const u = await User.findById(userID);
+        expect(u).to.be.not.exist;
       });
     });
   });

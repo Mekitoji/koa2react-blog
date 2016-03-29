@@ -1,40 +1,32 @@
 import User from '../models/user';
-import chai, { expect } from 'chai';
-import chaiSubset from 'chai-subset';
-import chaiAsPromised from 'chai-as-promised';
-
-chai.use(chaiSubset);
-chai.use(chaiAsPromised);
+import { expect } from 'chai';
 
 describe('User', () => {
   const user = { mail: 'swampthing@parlament.com', password: 'Abigail', role: 'user' };
   const { mail, password } = user;
 
-  before(done => {
-    User.create(user).then(() => done());
-  });
-
-  it('expect pre #save hash password', done => {
-    expect(User.findOne({ mail }).exec())
-      .to.eventually.not.containSubset({ password })
-      .notify(done);
+  before(async () => {
+    const u = await User.create(user);
+    expect(u.password).to.be.not.eql(password);
   });
 
   describe('#comparePassword', () => {
-    it('expect #comparePassword return true with correct password', done => {
-      User.findOne({ mail }).exec()
-        .then(data => {
-          expect(data.comparePassword(password)).to.eventually.be.true.notify(done);
-        })
-        .catch(err => console.error(err));
+    it('expect #comparePassword return true with correct password', async () => {
+      const u = await User.findOne({ mail });
+      const isMatch = await u.comparePassword(password);
+      expect(isMatch).to.be.true;
     });
 
-    it('expect #comparePassword return false with incorrect password', done => {
+    it('expect #comparePassword return false with incorrect password', async () => {
       const passwordToFail = 'Arcane';
-      User.findOne({ mail }).exec()
-        .then(data => {
-          expect(data.comparePassword(passwordToFail)).to.eventually.be.false.notify(done);
-        });
+      const u = await User.findOne({ mail });
+      const isMatch = await u.comparePassword(passwordToFail);
+      expect(isMatch).to.be.false;
+    });
+
+    it('expect password field is hidden', async () => {
+      const u = await User.findOne({ mail });
+      expect(u.password).to.not.exist;
     });
   });
 });
