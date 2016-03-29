@@ -25,12 +25,15 @@ const PostSchema = new Schema({
     type: ObjectId,
     ref: 'Comment',
   }],
-}, {
-  versionKey: false,
 });
 
-PostSchema.statics.all = function getAll() {
-  return this.find({}).populate('author comments').exec();
+/**
+ * find all post and populate with author and comment prop
+ * @method all
+ * @return {Promise.<Array|Error>} populated posts
+ */
+PostSchema.statics.all = function () {
+  return this.find({}).select('-__v').populate('author comments', '-_id -__v -_post').exec();
 };
 
 const Post = mongoose.model('Post', PostSchema);

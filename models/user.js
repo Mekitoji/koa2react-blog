@@ -20,8 +20,6 @@ const UserSchema = new Schema({
     required: true,
     default: 'user',
   },
-}, {
-  versionKey: false,
 });
 
 /** hash password before finally save **/

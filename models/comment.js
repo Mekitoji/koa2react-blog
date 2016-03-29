@@ -23,21 +23,25 @@ const CommentSchema = new Schema({
     ref: 'Post',
     required: true,
   },
-}, {
-  versionKey: false,
 });
 
-CommentSchema.statics.all = function getAll() {
-  return this
-    .find({})
-    .populate('author')
-    .exec();
+/**
+ * get all comments populated with authors
+ * @method all
+ * @return {Promise} result
+ */
+CommentSchema.statics.all = function () {
+  return this.find({}).select('-__v').populate('author', '-_id -__v').exec();
 };
 
-CommentSchema.pre('save', function save(next) {
-  Post.findByIdAndUpdate(this._post, { $push: { comments: this._id } })
-  .exec()
-  .then(() => next());
+CommentSchema.pre('save', async function (next) {
+  if (!this.isNew) return next();
+  try {
+    await Post.findByIdAndUpdate(this._post, { $push: { comments: this._id } });
+  } catch (e) {
+    next(e);
+  }
+  next();
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
