@@ -38,6 +38,7 @@ describe('Comment', () => {
     it('expect version key and id be unselected in populated author', async () => {
       const comment = await Comment.all();
 
+      /* eslint-disable no-unused-expressions */
       comment.forEach(c => {
         expect(c._v).to.not.exist;
       });
@@ -46,6 +47,7 @@ describe('Comment', () => {
         expect(c.author._id).to.not.exist;
         expect(c.author.__v).to.not.exist;
       });
+      /* eslint-enable no-unused-expressions */
     });
   });
 });

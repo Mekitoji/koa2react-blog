@@ -27,7 +27,7 @@ UserSchema.pre('save', function hashPassword(next) {
   if (!this.isModified('password')) return next();
   return bcrypt.genSalt(SALT_FACTOR, (err, salt) => {
     if (err) return next(err);
-    bcrypt.hash(this.password, salt, (e, hash) => {
+    return bcrypt.hash(this.password, salt, (e, hash) => {
       if (e) return next(e);
       this.password = hash;
       return next();
@@ -41,7 +41,7 @@ UserSchema.pre('save', function hashPassword(next) {
  * @param  {String}                     candidate password to compare
  * @return {Promise.<boolean|Error>}    result
  */
-UserSchema.methods.comparePassword = function (candidate) {
+UserSchema.methods.comparePassword = function comparePassword(candidate) {
   return new Promise((resolve, reject) =>
     this.constructor.findById(this._id).select('+password').exec()
     .then(data => {

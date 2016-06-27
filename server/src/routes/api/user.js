@@ -1,8 +1,8 @@
 import Router from 'koa-router';
-import userCtrl from '../controllers/user';
+import userCtrl from '../../controllers/user';
 
 function reg(app) {
-  const prefix = '/user';
+  const prefix = '/api/user';
   const router = new Router({ prefix });
 
   router.get('/', userCtrl.all);

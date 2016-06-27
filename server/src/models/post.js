@@ -32,8 +32,11 @@ const PostSchema = new Schema({
  * @method all
  * @return {Promise.<Array|Error>} populated posts
  */
-PostSchema.statics.all = function () {
-  return this.find({}).select('-__v').populate('author comments', '-_id -__v -_post').exec();
+PostSchema.statics.all = function all() {
+  return this.find({})
+    .select('-__v')
+    .populate('author comments', '-_id -__v -_post')
+    .exec();
 };
 
 const Post = mongoose.model('Post', PostSchema);

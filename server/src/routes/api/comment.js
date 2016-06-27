@@ -1,8 +1,8 @@
 import Router from 'koa-router';
-import commentCtrl from '../controllers/comment';
+import commentCtrl from '../../controllers/comment';
 
 function reg(app) {
-  const prefix = '/comment';
+  const prefix = '/api/comment';
   const router = new Router({ prefix });
 
   router.get('/', commentCtrl.all);

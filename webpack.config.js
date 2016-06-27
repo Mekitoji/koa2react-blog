@@ -1,9 +1,9 @@
-const path = require('path');
+const { resolve } = require('path');
 
 module.exports = {
-  entry: './client/index.js',
+  entry: './client/src/index.js',
   output: {
-    path: path.join(__dirname, 'public/js'),
+    path: resolve(__dirname, 'server/public/js/dist'),
     filename: 'bundle.js',
   },
   module: {
@@ -11,12 +11,12 @@ module.exports = {
       {
         test: /\.jsx?$/,
         loader: 'babel-loader',
-        exlude: /node_modules/,
+        exclude: /node_modules/,
       },
     ],
   },
   resolveLoader: {
-    root: path.join(__dirname, 'node_modules'),
+    root: resolve(__dirname, 'node_modules'),
   },
   devtool: 'source-map',
 };

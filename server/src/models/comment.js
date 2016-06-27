@@ -30,18 +30,21 @@ const CommentSchema = new Schema({
  * @method all
  * @return {Promise} result
  */
-CommentSchema.statics.all = function () {
-  return this.find({}).select('-__v').populate('author', '-_id -__v').exec();
+CommentSchema.statics.all = function all() {
+  return this.find({})
+    .select('-__v')
+    .populate('author', '-_id -__v')
+    .exec();
 };
 
-CommentSchema.pre('save', async function (next) {
+CommentSchema.pre('save', async function preSave(next) {
   if (!this.isNew) return next();
   try {
     await Post.findByIdAndUpdate(this._post, { $push: { comments: this._id } });
   } catch (e) {
-    next(e);
+    return next(e);
   }
-  next();
+  return next();
 });
 
 const Comment = mongoose.model('Comment', CommentSchema);
