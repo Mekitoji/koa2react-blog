@@ -6,7 +6,7 @@
   "scripts": {
     "babel-node": "babel-node server/src/index.js",
     "dev": "nodemon --exec npm run babel-node --ignore /dist/ --ignore /test/",
-    "test:server": "mocha --compilers js:babel-register --recursive server/src/test",
+    "test:server": "mocha --compilers js:babel-register --recursive server/src/test --require babel-polyfill",
     "test:server:watch": "npm test -- --watch",
     "test:client": "",
     "test": "npm run test:server",
@@ -48,6 +48,7 @@
     "babel-core": "^6.10.4",
     "babel-eslint": "^6.1.0",
     "babel-loader": "^6.2.4",
+    "babel-polyfill": "^6.9.1",
     "babel-preset-es2015": "^6.9.0",
     "babel-preset-react": "^6.11.0",
     "babel-preset-stage-2": "^6.11.0",
