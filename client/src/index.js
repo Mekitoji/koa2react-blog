@@ -1,7 +1,8 @@
 import React from 'react';
+import Post from './components/Post';
 import { render } from 'react-dom';
 
 render(
-  <div>Empty</div>,
+  <Post />,
   document.getElementById('root')
 );

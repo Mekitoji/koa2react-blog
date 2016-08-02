@@ -1,7 +1,7 @@
 import mongoose from 'mongoose';
-import { DB } from '../config';
+import { db } from '../config';
 
-const URI = `mongodb://localhost/${DB}`;
+const URI = `mongodb://localhost/${db}`;
 mongoose.Promise = global.Promise;
 mongoose.connect(URI);
 
